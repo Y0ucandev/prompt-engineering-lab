@@ -1,10 +1,10 @@
 # GenAI Lab — instrukcje dla agenta
 
-Projekt dydaktyczny: koszyk sklepowy (zadanie 1) i wypożyczalnia książek (zadanie 2).
+Projekt dydaktyczny: cart sklepowy (zadanie 1) i wypożyczalnia książek (zadanie 2).
 
 ## Stack
 - Java 17, Maven, JUnit 5. Zero zależności poza JDK w kodzie produkcyjnym.
-- Testy: `mvn -q test`. Jedna klasa: `mvn -q test -Dtest=KoszykTest` albo `-Dtest=LibraryTest`.
+- Testy: `mvn -q test`. Jedna klasa: `mvn -q test -Dtest=CartTest` albo `-Dtest=LibraryTest`.
 
 ## Zasady
 - Pliki w `src/test/` są specyfikacją. NIE modyfikuj testów. Jeśli uważasz, że test jest błędny, powiedz o tym użytkownikowi i zatrzymaj się.

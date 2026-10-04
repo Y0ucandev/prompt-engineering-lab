@@ -1,4 +1,4 @@
-package pl.pollub.genai.lab.wypozyczalnia;
+package pl.pollub.genai.lab.library;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

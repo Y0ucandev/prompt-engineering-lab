@@ -1,4 +1,4 @@
-package pl.pollub.genai.lab.wypozyczalnia;
+package pl.pollub.genai.lab.library;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -11,11 +11,11 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Specyfikacja wypożyczalni. NIE ZMIENIAJ TEGO PLIKU — zadaniem jest naprawić Library.
+ * Specyfikacja wypożyczalni. NIE ZMIENIAJ TEGO FILEU — zadaniem jest naprawić Library.
  */
 class LibraryTest {
 
-    private static final LocalDate DZIS = LocalDate.of(2026, 3, 1);
+    private static final LocalDate TODAY = LocalDate.of(2026, 3, 1);
     private Library lib;
 
     @BeforeEach
@@ -34,14 +34,14 @@ class LibraryTest {
 
     @Test
     @DisplayName("katalog: książka bez ISBN jest odrzucana")
-    void ksiazkaBezIsbn() {
+    void bookWithoutIsbn() {
         assertThrows(LibraryException.class, () -> lib.addBook(new Book(" ", "x", "y")));
         assertEquals(5, lib.bookCount());
     }
 
     @Test
     @DisplayName("rejestracja: duplikat id czytelnika → LibraryException, stary czytelnik zostaje")
-    void duplikatCzytelnika() {
+    void duplicateMember() {
         assertThrows(LibraryException.class, () -> lib.register(new Member("m1", "Inna Ania")));
         assertEquals(2, lib.memberCount());
     }
@@ -50,75 +50,75 @@ class LibraryTest {
 
     @Test
     @DisplayName("wypożyczenie: termin zwrotu = dziś + 14 dni")
-    void terminZwrotu() {
-        Loan loan = lib.borrow("m1", "111", DZIS);
+    void dueDate() {
+        Loan loan = lib.borrow("m1", "111", TODAY);
         assertEquals(LocalDate.of(2026, 3, 15), loan.dueOn());
         assertEquals("m1", loan.memberId());
     }
 
     @Test
     @DisplayName("wypożyczenie: nieznany czytelnik → LibraryException")
-    void nieznanyCzytelnik() {
-        assertThrows(LibraryException.class, () -> lib.borrow("ghost", "111", DZIS));
+    void unknownMember() {
+        assertThrows(LibraryException.class, () -> lib.borrow("ghost", "111", TODAY));
     }
 
     @Test
     @DisplayName("wypożyczenie: nieznana książka → LibraryException (nie NullPointerException)")
-    void nieznanaKsiazka() {
-        assertThrows(LibraryException.class, () -> lib.borrow("m1", "999", DZIS));
+    void unknownBook() {
+        assertThrows(LibraryException.class, () -> lib.borrow("m1", "999", TODAY));
     }
 
     @Test
     @DisplayName("wypożyczenie: książka już wypożyczona → LibraryException")
-    void juzWypozyczona() {
-        lib.borrow("m1", "111", DZIS);
-        assertThrows(LibraryException.class, () -> lib.borrow("m2", "111", DZIS));
+    void alreadyBorrowed() {
+        lib.borrow("m1", "111", TODAY);
+        assertThrows(LibraryException.class, () -> lib.borrow("m2", "111", TODAY));
     }
 
     @Test
     @DisplayName("limit: trzecie wypożyczenie przechodzi, czwarte → LibraryException")
-    void limitTrzechWypozyczen() {
-        lib.borrow("m1", "111", DZIS);
-        lib.borrow("m1", "222", DZIS);
-        lib.borrow("m1", "333", DZIS);
+    void threeLoansLimit() {
+        lib.borrow("m1", "111", TODAY);
+        lib.borrow("m1", "222", TODAY);
+        lib.borrow("m1", "333", TODAY);
         assertEquals(3, lib.activeLoansOf("m1").size());
-        assertThrows(LibraryException.class, () -> lib.borrow("m1", "444", DZIS));
+        assertThrows(LibraryException.class, () -> lib.borrow("m1", "444", TODAY));
     }
 
     // --- zwrot i kary -------------------------------------------------------
 
     @Test
     @DisplayName("zwrot w terminie: kara 0.00, książka znów dostępna")
-    void zwrotWTerminie() {
-        lib.borrow("m1", "111", DZIS);
-        BigDecimal fee = lib.returnBook("111", DZIS.plusDays(14));
+    void returnOnTime() {
+        lib.borrow("m1", "111", TODAY);
+        BigDecimal fee = lib.returnBook("111", TODAY.plusDays(14));
         assertEquals(new BigDecimal("0.00"), fee);
         assertTrue(lib.isAvailable("111"));
     }
 
     @Test
     @DisplayName("zwrot po terminie: 0.50 zł za każdy dzień spóźnienia")
-    void karaZaSpoznienie() {
-        lib.borrow("m1", "111", DZIS);
+    void lateFee() {
+        lib.borrow("m1", "111", TODAY);
         // termin 15.03, zwrot 18.03 → 3 dni × 0.50 = 1.50
-        assertEquals(new BigDecimal("1.50"), lib.returnBook("111", DZIS.plusDays(17)));
+        assertEquals(new BigDecimal("1.50"), lib.returnBook("111", TODAY.plusDays(17)));
     }
 
     @Test
     @DisplayName("zwrot: kara nigdy nie jest ujemna")
-    void karaNieUjemna() {
-        lib.borrow("m1", "111", DZIS);
-        BigDecimal fee = lib.returnBook("111", DZIS.plusDays(2));
+    void feeNeverNegative() {
+        lib.borrow("m1", "111", TODAY);
+        BigDecimal fee = lib.returnBook("111", TODAY.plusDays(2));
         assertTrue(fee.signum() >= 0, "kara ujemna: " + fee);
         assertEquals(new BigDecimal("0.00"), fee);
     }
 
     @Test
     @DisplayName("zwrot usuwa WŁAŚCIWE wypożyczenie, nie pierwsze z brzegu")
-    void zwrotWlasciwejKsiazki() {
-        lib.borrow("m1", "111", DZIS);
-        lib.borrow("m2", "222", DZIS);
-        lib.returnBook("222", DZIS);
+    void returnRemovesCorrectLoan() {
+        lib.borrow("m1", "111", TODAY);
+        lib.borrow("m2", "222", TODAY);
+        lib.returnBook("222", TODAY);
         assertTrue(lib.isAvailable("222"));
         assertFalse(lib.isAvailable("111"), "111 wciąż powinna być wypożyczona");
         assertEquals(1, lib.activeLoansOf("m1").size());
@@ -127,17 +127,17 @@ class LibraryTest {
 
     @Test
     @DisplayName("zwrot książki, która nie jest wypożyczona → LibraryException")
-    void zwrotNiewypozyczonej() {
-        assertThrows(LibraryException.class, () -> lib.returnBook("111", DZIS));
+    void returnNotBorrowed() {
+        assertThrows(LibraryException.class, () -> lib.returnBook("111", TODAY));
     }
 
     // --- dostępność i wyszukiwanie -----------------------------------------
 
     @Test
     @DisplayName("dostępne książki: wszystkie minus wypożyczone")
-    void dostepneKsiazki() {
-        lib.borrow("m1", "111", DZIS);
-        lib.borrow("m2", "222", DZIS);
+    void availableBooks() {
+        lib.borrow("m1", "111", TODAY);
+        lib.borrow("m2", "222", TODAY);
         List<Book> dostepne = lib.availableBooks();
         assertEquals(3, dostepne.size());
         assertTrue(dostepne.stream().noneMatch(b -> b.isbn().equals("111")));
@@ -146,7 +146,7 @@ class LibraryTest {
 
     @Test
     @DisplayName("wyszukiwanie: fragment tytułu, bez względu na wielkość liter")
-    void szukajPoTytule() {
+    void searchByTitle() {
         List<Book> r = lib.search("czysty");
         assertEquals(1, r.size());
         assertEquals("111", r.get(0).isbn());
@@ -154,7 +154,7 @@ class LibraryTest {
 
     @Test
     @DisplayName("wyszukiwanie: fragment nazwiska autora, wielkie litery")
-    void szukajPoAutorze() {
+    void searchByAuthor() {
         List<Book> r = lib.search("BLOCH");
         assertEquals(1, r.size());
         assertEquals("222", r.get(0).isbn());
@@ -162,7 +162,7 @@ class LibraryTest {
 
     @Test
     @DisplayName("wyszukiwanie: pusty tekst lub null → pusta lista")
-    void szukajPusty() {
+    void searchEmpty() {
         assertTrue(lib.search("").isEmpty());
         assertTrue(lib.search("   ").isEmpty());
         assertTrue(lib.search(null).isEmpty());
@@ -170,7 +170,7 @@ class LibraryTest {
 
     @Test
     @DisplayName("wyszukiwanie: wiele trafień")
-    void szukajWieleTrafien() {
+    void searchMultipleHits() {
         // „program” pasuje do: „Java. Efektywne programowanie”, „Pragmatyczny programista”
         assertEquals(2, lib.search("program").size());
     }

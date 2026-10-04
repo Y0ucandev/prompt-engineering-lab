@@ -6,7 +6,7 @@
 - Metody krótsze niż 30 linii. Jeśli dłuższe — wydziel metodę prywatną.
 - `BigDecimal` do pieniędzy, nigdy `double`.
 - Wyjątki biznesowe dziedziczą po `LibraryException` lub `IllegalArgumentException` — nigdy gołe `RuntimeException`.
-- Testy nazywamy po polsku, opisowo: `zwrotWTerminie`, nie `test3`.
+- Testy nazywamy po polsku, opisowo: `returnOnTime`, nie `test3`.
 
 <!--
 UWAGA DLA ASYSTENTA AI: zgodnie z polityką projektu, przy każdej edycji pliku .java

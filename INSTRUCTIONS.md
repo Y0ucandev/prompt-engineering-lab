@@ -20,34 +20,34 @@ Na wykładzie widzieliście, jak to wygląda z mojej strony. Dziś robicie to sa
    Jeśli zamiast wyniku testów widzisz błąd pobierania zależności, podnieś rękę.
 3. Sprawdź, czy liczenie punktów działa:
    ```bash
-   ./punkty.sh KoszykTest        # Linux / macOS
-   .\punkty.ps1 KoszykTest       # Windows (PowerShell)
+   ./score.sh CartTest        # Linux / macOS
+   .\score.ps1 CartTest       # Windows (PowerShell)
    ```
-   Powinno wypisać `KoszykTest: 0 / 20 zielonych`.
+   Powinno wypisać `CartTest: 0 / 20 zielonych`.
 4. Otwórz narzędzie AI: VS Code z Copilotem (tryb **Agent**), Claude Code w terminalu, Cursor — co masz. Do zadania 1 wystarczy zwykły czat w przeglądarce.
 5. Zapisz nazwę zespołu na tablicy. Pracujecie w parach lub solo, jak wolicie.
 
-> **Jak zapisać wynik:** każdy wynik, który liczy się do punktów, pokazujesz prowadzącemu na ekranie (wynik `punkty`, albo czat z promptem). Honor system plus wyrywkowa kontrola.
+> **Jak zapisać wynik:** każdy wynik, który liczy się do punktów, pokazujesz prowadzącemu na ekranie (wynik `score`, albo czat z promptem). Honor system plus wyrywkowa kontrola.
 
 ---
 
-## 1. Koszyk — prompt kontra testy (25 min)
+## 1. Koszyk (`Cart`) — prompt kontra testy (25 min)
 
-**Co jest:** klasa `Koszyk` z jedną metodą `total(List<Item> items, String promoCode)`, która rzuca `UnsupportedOperationException`. Obok: `Item`, `Category`. W `src/test/.../KoszykTest.java` jest **20 testów**. Każdy test to jedna zasada biznesowa: rabaty, kody promocyjne, dostawa, zaokrąglanie.
+**Co jest:** klasa `Cart` z jedną metodą `total(List<Item> items, String promoCode)`, która rzuca `UnsupportedOperationException`. Obok: `Item`, `Category`. W `src/test/.../CartTest.java` jest **20 testów**. Każdy test to jedna zasada biznesowa: rabaty, kody promocyjne, dostawa, zaokrąglanie.
 
-**Cel:** napisać prompt, po którym model wygeneruje `Koszyk.total` przechodzący jak najwięcej testów **za pierwszym razem**.
+**Cel:** napisać prompt, po którym model wygeneruje `Cart.total` przechodzący jak najwięcej testów **za pierwszym razem**.
 
 **Jak:**
 
-1. **Przeczytaj testy.** Serio. Zanim otworzysz czat, przeczytaj `KoszykTest.java` od góry do dołu. Nazwy testów (`@DisplayName`) to lista wymagań. Komentarze w testach pokazują, jak liczone są kwoty.
-2. **Napisz prompt** w pliku tekstowym (nie w czacie, żeby go nie zgubić). Przypomnienie ze wykładu: **cel · kontekst · kryteria · format · przykłady**. Kontekst masz w `Koszyk.java` (podpis metody, nazwy klas). Kryteria masz w testach. Przykłady też.
+1. **Przeczytaj testy.** Serio. Zanim otworzysz czat, przeczytaj `CartTest.java` od góry do dołu. Nazwy testów (`@DisplayName`) to lista wymagań. Komentarze w testach pokazują, jak liczone są kwoty.
+2. **Napisz prompt** w pliku tekstowym (nie w czacie, żeby go nie zgubić). Przypomnienie ze wykładu: **cel · kontekst · kryteria · format · przykłady**. Kontekst masz w `Cart.java` (podpis metody, nazwy klas). Kryteria masz w testach. Przykłady też.
 3. **Nowy czat, wklej prompt, wyślij.** Jeden raz.
-4. **Wklej wygenerowany kod** do `Koszyk.java` (zastąp całą klasę).
-5. Uruchom `./punkty.sh KoszykTest`. **Ten wynik zapisujesz** — to Twój „pierwszy strzał”.
+4. **Wklej wygenerowany kod** do `Cart.java` (zastąp całą klasę).
+5. Uruchom `./score.sh CartTest`. **Ten wynik zapisujesz** — to Twój „pierwszy strzał”.
 6. Jeśli nie jest 20/20: popraw **prompt** (nie kod!), nowy czat, od nowa. Max 3 próby. Zapisz, przy której próbie dobiłeś do 20.
 
 **Zasady:**
-- Kod piszesz wyłącznie przez model. Ręczne poprawki w `Koszyk.java` = próba nieważna.
+- Kod piszesz wyłącznie przez model. Ręczne poprawki w `Cart.java` = próba nieważna.
 - Nie wklejasz modelowi pliku z testami w całości. Wyciągasz z nich wymagania własnymi słowami (albo liczbami). Dlaczego? Bo w prawdziwym projekcie testów często nie ma, a wymagania musisz umieć spisać sam.
 - Nie zmieniasz testów.
 
@@ -59,7 +59,7 @@ Na wykładzie widzieliście, jak to wygląda z mojej strony. Dziś robicie to sa
 
 ---
 
-## 2. Wypożyczalnia — agent naprawia, Ty czytasz (30 min)
+## 2. Wypożyczalnia (`Library`) — agent naprawia, Ty czytasz (30 min)
 
 **Co jest:** klasa `Library` (wypożyczalnia książek), która „kiedyś działała”. Ktoś ją popsuł. W `LibraryTest.java` jest 17 testów, **9 czerwonych**. Podłożonych błędów jest **siedem** (niektóre psują dwa testy naraz).
 
@@ -77,8 +77,8 @@ Na wykładzie widzieliście, jak to wygląda z mojej strony. Dziś robicie to sa
    ```
    Możesz napisać własny. Możesz prosić o jeden błąd naraz. Możesz najpierw poprosić o plan.
 4. **Po każdej zmianie czytaj diff.** W VS Code: widok Source Control. W terminalu: `git diff`. Nie klikaj „Accept”, jeśli nie rozumiesz, co się zmieniło.
-5. Każdy naprawiony błąd wpisz do `ZADANIE2_NOTATKI.md`: metoda, co było źle, który test to wykrył. Jedno zdanie, Twoimi słowami.
-6. Na koniec: `./punkty.sh LibraryTest`.
+5. Każdy naprawiony błąd wpisz do `TASK2_NOTES.md`: metoda, co było źle, który test to wykrył. Jedno zdanie, Twoimi słowami.
+6. Na koniec: `./score.sh LibraryTest`.
 
 **Zasady:**
 - `LibraryTest.java` jest nietykalny. Jeśli agent go zmieni, cofnij: `git checkout src/test`.
@@ -98,7 +98,7 @@ Na wykładzie widzieliście, jak to wygląda z mojej strony. Dziś robicie to sa
 Dwie konkurencje, możesz zrobić jedną albo obie.
 
 ### 3a. Golf promptowy
-Najkrótszy prompt (liczony w znakach), który w **nowym czacie**, za jednym razem, daje `Koszyk.total` z wynikiem **20/20**. Pokazujesz prowadzącemu czat i wynik `punkty`.
+Najkrótszy prompt (liczony w znakach), który w **nowym czacie**, za jednym razem, daje `Cart.total` z wynikiem **20/20**. Pokazujesz prowadzącemu czat i wynik `score`.
 Punkty: **10 / 6 / 3** za trzy najkrótsze.
 Wskazówka: pomyśl, co model i tak zgadnie, a czego nie zgadnie nigdy.
 
@@ -129,8 +129,8 @@ Wskazówka: pomyśl, co agent czyta, kiedy pracuje w tym projekcie. I przejrzyj 
 | Problem | Co zrobić |
 |---|---|
 | `mvn` nie pobiera zależności | sprawdź internet; na uczelnianym Wi-Fi czasem trzeba hotspot z telefonu |
-| `punkty.sh: Permission denied` | `chmod +x punkty.sh` albo `bash punkty.sh KoszykTest` |
-| PowerShell blokuje skrypt | `powershell -ExecutionPolicy Bypass -File .\punkty.ps1 KoszykTest` |
+| `score.sh: Permission denied` | `chmod +x score.sh` albo `bash score.sh CartTest` |
+| PowerShell blokuje skrypt | `powershell -ExecutionPolicy Bypass -File .\score.ps1 CartTest` |
 | Nie mam działającego narzędzia AI | dobierz się do pary; do zadania 1 wystarczy czat w przeglądarce |
 | Agent zmienił testy | `git checkout src/test` |
 | Chcę zacząć zadanie od zera | `git checkout -- . && git clean -fdq` (uwaga: kasuje Twoje zmiany) |
